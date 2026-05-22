@@ -172,14 +172,17 @@ async function excluirPartida(id) {
       >
 
         <h1
-          style={{
-            textAlign: 'center',
-            fontSize: 42,
-            marginBottom: 10
-          }}
-        >
-          🎾 Ranking de Tênis
-        </h1>
+  style={{
+    textAlign: 'center',
+    fontSize: 38,
+    marginBottom: 10,
+    lineHeight: 1.3
+  }}
+>
+  🏆 LIGA LUCAS GUIMARÃES
+  <br />
+  TENNIS ACADEMY
+</h1>
 
         <p
           style={{
