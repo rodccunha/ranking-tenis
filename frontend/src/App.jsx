@@ -176,7 +176,8 @@ async function excluirPartida(id) {
     textAlign: 'center',
     fontSize: 38,
     marginBottom: 10,
-    lineHeight: 1.3
+    lineHeight: 1.3,
+    color: 'white'
   }}
 >
   🏆 LIGA LUCAS GUIMARÃES
