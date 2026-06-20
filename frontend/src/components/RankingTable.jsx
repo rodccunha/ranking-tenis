@@ -3,12 +3,10 @@ import { useState } from 'react'
 const COLUNAS = [
   { key: 'posicao',        label: 'Pos.',       sortable: false },
   { key: 'nome',           label: 'Jogador',    sortable: true  },
-  { key: 'elo',            label: 'Pts ELO',    sortable: true  },
   { key: 'vitorias',       label: 'Vitórias',   sortable: true  },
   { key: 'derrotas',       label: 'Derrotas',   sortable: true  },
   { key: 'partidas',       label: 'Partidas',   sortable: true  },
   { key: 'aproveitamento', label: 'Aproveit.',  sortable: true  },
-  { key: 'streak',         label: 'Sequência',  sortable: true  },
 ]
 
 function rateClass(pct) {
@@ -17,20 +15,8 @@ function rateClass(pct) {
   return 'rate rate-low'
 }
 
-function eloClass(elo) {
-  if (elo > 1000) return 'rate rate-high'
-  if (elo < 1000) return 'rate rate-low'
-  return ''
-}
-
-function streakLabel(streak) {
-  if (streak === 0) return '—'
-  if (streak > 0) return `🔥 ${streak}`
-  return `❄️ ${Math.abs(streak)}`
-}
-
 export function RankingTable({ ranking }) {
-  const [sortKey, setSortKey] = useState('elo')
+  const [sortKey, setSortKey] = useState('aproveitamento')
   const [sortDir, setSortDir] = useState('desc')
 
   function handleSort(key) {
@@ -58,7 +44,7 @@ export function RankingTable({ ranking }) {
     <div className="card fade-in-3">
       <h2>🏆 Ranking</h2>
       <p style={{ color: '#475569', fontSize: 12, margin: '4px 0 0' }}>
-        Pontos ELO — vencer jogadores mais fortes vale mais pontos
+        Ordenado por aproveitamento — em caso de empate, quem jogou mais partidas fica à frente
       </p>
       <div className="table-wrapper">
         <table className="ranking-table">
@@ -87,11 +73,6 @@ export function RankingTable({ ranking }) {
               <tr key={item.nome}>
                 <td>{medalFor(item.nome)}</td>
                 <td style={{ fontWeight: 500, textAlign: 'left' }}>{item.nome}</td>
-                <td>
-                  <span className={eloClass(item.elo)} style={{ fontWeight: 800, fontSize: 16 }}>
-                    {item.elo}
-                  </span>
-                </td>
                 <td style={{ color: '#4ade80', fontWeight: 600 }}>{item.vitorias}</td>
                 <td style={{ color: '#f87171' }}>{item.derrotas}</td>
                 <td>{item.partidas}</td>
@@ -100,7 +81,6 @@ export function RankingTable({ ranking }) {
                     {item.aproveitamento}%
                   </span>
                 </td>
-                <td style={{ fontSize: 14 }}>{streakLabel(item.streak)}</td>
               </tr>
             ))}
           </tbody>

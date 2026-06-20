@@ -86,30 +86,23 @@ function App() {
   }
 
   function calcularRanking() {
-    const K = 32
     const stats = {}
     jogadores.forEach((j) => {
-      stats[j.nome] = { nome: j.nome, vitorias: 0, derrotas: 0, partidas: 0, aproveitamento: 0, elo: 1000, streak: 0 }
+      stats[j.nome] = { nome: j.nome, vitorias: 0, derrotas: 0, partidas: 0, aproveitamento: 0 }
     })
-    // Processar em ordem cronológica para ELO ser acumulado corretamente
-    const cronologico = [...partidas].reverse()
-    cronologico.forEach((p) => {
+    partidas.forEach((p) => {
       const v = p.vencedor
       const d = p.jogador1 === v ? p.jogador2 : p.jogador1
       if (!stats[v] || !stats[d]) return
       stats[v].vitorias++; stats[v].partidas++
       stats[d].derrotas++; stats[d].partidas++
-      const eloV = stats[v].elo, eloD = stats[d].elo
-      const expV = 1 / (1 + Math.pow(10, (eloD - eloV) / 400))
-      stats[v].elo = Math.round(eloV + K * (1 - expV))
-      stats[d].elo = Math.round(eloD + K * (0 - (1 - expV)))
-      stats[v].streak = stats[v].streak > 0 ? stats[v].streak + 1 : 1
-      stats[d].streak = stats[d].streak < 0 ? stats[d].streak - 1 : -1
     })
     Object.values(stats).forEach((j) => {
       if (j.partidas > 0) j.aproveitamento = Math.round((j.vitorias / j.partidas) * 100)
     })
-    return Object.values(stats).sort((a, b) => b.elo - a.elo)
+    return Object.values(stats).sort((a, b) =>
+      b.aproveitamento - a.aproveitamento || b.partidas - a.partidas
+    )
   }
 
   useEffect(() => {
