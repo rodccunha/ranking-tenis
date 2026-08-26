@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from './supabase'
 import { Toast } from './components/Toast'
 import { QuickActions } from './components/QuickActions'
 import { RankingTable } from './components/RankingTable'
 import { PlayerGrid } from './components/PlayerGrid'
 import { HistoricoPartidas } from './components/HistoricoPartidas'
+import { ConfirmDialog } from './components/ConfirmDialog'
 import { TrophyIcon } from './components/Icons'
 
 function App() {
@@ -19,12 +20,17 @@ function App() {
   const [vencedor, setVencedor] = useState('')
   const [resultado, setResultado] = useState('')
   const [novoJogador, setNovoJogador] = useState('')
+  const [confirmacao, setConfirmacao] = useState(null) // { tipo: 'partida' | 'jogador', id, nome }
 
   const [toast, setToast] = useState({ mensagem: '', tipo: 'sucesso' })
+  const toastId = useRef(0)
 
   function mostrarToast(mensagem, tipo = 'sucesso') {
+    const id = ++toastId.current
     setToast({ mensagem, tipo })
-    setTimeout(() => setToast({ mensagem: '', tipo: 'sucesso' }), 3000)
+    setTimeout(() => {
+      setToast((atual) => (id === toastId.current ? { mensagem: '', tipo: 'sucesso' } : atual))
+    }, 3000)
   }
 
   async function carregarJogadores() {
@@ -39,9 +45,23 @@ function App() {
     if (data) setPartidas(data)
   }
 
+  function resultadoValido(valor) {
+    const texto = valor.trim()
+    if (!texto) return true
+    return texto.split(/\s+/).every((set) => /^\d+\/\d+$/.test(set))
+  }
+
   async function cadastrarPartida() {
     if (!jogador1 || !jogador2 || !vencedor) {
       mostrarToast('Preencha todos os campos', 'erro')
+      return
+    }
+    if (jogador1 === jogador2) {
+      mostrarToast('Escolha dois jogadores diferentes', 'erro')
+      return
+    }
+    if (!resultadoValido(resultado)) {
+      mostrarToast('Resultado inválido. Use o formato 6/4 6/3', 'erro')
       return
     }
 
@@ -58,12 +78,17 @@ function App() {
   }
 
   async function cadastrarJogador() {
-    if (!novoJogador.trim()) {
+    const nome = novoJogador.trim()
+    if (!nome) {
       mostrarToast('Digite o nome do jogador', 'erro')
       return
     }
+    if (jogadores.some((j) => j.nome.toLowerCase() === nome.toLowerCase())) {
+      mostrarToast('Já existe um jogador com esse nome', 'erro')
+      return
+    }
     setAdicionandoJogador(true)
-    const { error } = await supabase.from('jogadores').insert([{ nome: novoJogador.trim() }])
+    const { error } = await supabase.from('jogadores').insert([{ nome }])
     if (error) {
       mostrarToast('Erro ao adicionar jogador', 'erro')
     } else {
@@ -74,8 +99,31 @@ function App() {
     setAdicionandoJogador(false)
   }
 
+  async function renomearJogador(id, nomeAtual, novoNomeBruto) {
+    const novoNome = novoNomeBruto.trim()
+    if (!novoNome || novoNome === nomeAtual) return
+    if (jogadores.some((j) => j.id !== id && j.nome.toLowerCase() === novoNome.toLowerCase())) {
+      mostrarToast('Já existe um jogador com esse nome', 'erro')
+      return
+    }
+
+    const { error } = await supabase.from('jogadores').update({ nome: novoNome }).eq('id', id)
+    if (error) {
+      mostrarToast('Erro ao renomear jogador', 'erro')
+      return
+    }
+    // As partidas guardam o nome do jogador em texto, não o id — atualiza o
+    // histórico junto para não repetir o problema de nomes desatualizados.
+    await Promise.all([
+      supabase.from('partidas').update({ jogador1: novoNome }).eq('jogador1', nomeAtual),
+      supabase.from('partidas').update({ jogador2: novoNome }).eq('jogador2', nomeAtual),
+      supabase.from('partidas').update({ vencedor: novoNome }).eq('vencedor', nomeAtual),
+    ])
+    mostrarToast('Jogador renomeado!')
+    await Promise.all([carregarJogadores(), carregarPartidas()])
+  }
+
   async function excluirPartida(id) {
-    if (!confirm('Deseja excluir esta partida?')) return
     const { error } = await supabase.from('partidas').delete().eq('id', id)
     if (error) {
       mostrarToast('Erro ao excluir partida', 'erro')
@@ -83,6 +131,23 @@ function App() {
       mostrarToast('Partida excluída')
       await carregarPartidas()
     }
+  }
+
+  async function excluirJogador(id) {
+    const { error } = await supabase.from('jogadores').delete().eq('id', id)
+    if (error) {
+      mostrarToast('Erro ao excluir jogador', 'erro')
+    } else {
+      mostrarToast('Jogador excluído')
+      await carregarJogadores()
+    }
+  }
+
+  async function confirmarExclusao() {
+    if (!confirmacao) return
+    if (confirmacao.tipo === 'partida') await excluirPartida(confirmacao.id)
+    else await excluirJogador(confirmacao.id)
+    setConfirmacao(null)
   }
 
   function gamesDaPartida(resultado) {
@@ -98,7 +163,7 @@ function App() {
   function calcularRanking() {
     const stats = {}
     jogadores.forEach((j) => {
-      stats[j.nome] = { nome: j.nome, vitorias: 0, derrotas: 0, partidas: 0, aproveitamento: 0, saldoVitorias: 0, saldoGames: 0 }
+      stats[j.nome] = { id: j.id, nome: j.nome, vitorias: 0, derrotas: 0, partidas: 0, aproveitamento: 0, saldoVitorias: 0, saldoGames: 0 }
     })
     partidas.forEach((p) => {
       const v = p.vencedor
@@ -160,7 +225,11 @@ function App() {
         ) : (
           <>
             <RankingTable ranking={ranking} />
-            <PlayerGrid ranking={ranking} />
+            <PlayerGrid
+              ranking={ranking}
+              onRenomear={renomearJogador}
+              onExcluir={(id, nome) => setConfirmacao({ tipo: 'jogador', id, nome })}
+            />
             <QuickActions
               jogadores={jogadores}
               jogador1={jogador1} setJogador1={setJogador1}
@@ -173,10 +242,25 @@ function App() {
               onAdicionarJogador={cadastrarJogador}
               adicionando={adicionandoJogador}
             />
-            <HistoricoPartidas partidas={partidas} onExcluir={excluirPartida} />
+            <HistoricoPartidas
+              partidas={partidas}
+              onExcluir={(id) => setConfirmacao({ tipo: 'partida', id })}
+            />
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        aberto={!!confirmacao}
+        titulo={confirmacao?.tipo === 'partida' ? 'Excluir partida?' : 'Excluir jogador?'}
+        mensagem={
+          confirmacao?.tipo === 'partida'
+            ? 'Essa ação não pode ser desfeita.'
+            : `As partidas de ${confirmacao?.nome} continuarão no histórico, mas o jogador sairá do ranking.`
+        }
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setConfirmacao(null)}
+      />
     </div>
   )
 }

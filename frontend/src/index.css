@@ -462,6 +462,94 @@ select.input option {
 
 .crown { color: #fbbf24; flex-shrink: 0; }
 
+.player-name-input {
+  padding: 4px 8px;
+  font-size: 14.5px;
+  width: auto;
+  min-width: 0;
+  flex: 1;
+}
+
+.player-card-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-icon:hover { background: #334155; color: white; }
+.btn-icon-danger-sm:hover { background: #ef44441a; color: #fca5a5; }
+
+/* ── Confirm dialog ── */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal-card {
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 360px;
+  width: 100%;
+  border: 1px solid #334155;
+}
+
+.modal-card h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  color: white;
+}
+
+.modal-card p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-danger-solid {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-danger-solid:hover { background: #dc2626; }
+
 /* ── Quick actions tabs ── */
 
 .tabs {

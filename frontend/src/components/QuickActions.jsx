@@ -39,6 +39,7 @@ export function QuickActions({
             className="input"
             value={jogador1}
             onChange={(e) => { setJogador1(e.target.value); setVencedor('') }}
+            aria-label="Jogador 1"
           >
             <option value="">Jogador 1</option>
             {jogadores.map((j) => (
@@ -50,6 +51,7 @@ export function QuickActions({
             className="input"
             value={jogador2}
             onChange={(e) => { setJogador2(e.target.value); setVencedor('') }}
+            aria-label="Jogador 2"
           >
             <option value="">Jogador 2</option>
             {jogadores.filter((j) => j.nome !== jogador1).map((j) => (
@@ -62,6 +64,7 @@ export function QuickActions({
             value={vencedor}
             onChange={(e) => setVencedor(e.target.value)}
             disabled={!jogador1 || !jogador2}
+            aria-label="Vencedor"
           >
             <option value="">Vencedor</option>
             {[jogador1, jogador2].filter(Boolean).map((nome) => (
@@ -76,6 +79,7 @@ export function QuickActions({
             value={resultado}
             onChange={(e) => setResultado(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSalvarPartida()}
+            aria-label="Resultado"
           />
 
           <button className="btn-primary" onClick={onSalvarPartida} disabled={salvando}>
@@ -92,6 +96,7 @@ export function QuickActions({
             value={novoJogador}
             onChange={(e) => setNovoJogador(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onAdicionarJogador()}
+            aria-label="Nome do jogador"
           />
           <button className="btn-primary" onClick={onAdicionarJogador} disabled={adicionando}>
             <PlusIcon size={16} />

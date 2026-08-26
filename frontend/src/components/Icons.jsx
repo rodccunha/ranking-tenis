@@ -52,6 +52,22 @@ export function CheckIcon({ size = 16, className }) {
   )
 }
 
+export function PencilIcon({ size = 16, className }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} {...base}>
+      <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  )
+}
+
+export function XIcon({ size = 16, className }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" className={className}>
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  )
+}
+
 export function TrashIcon({ size = 16, className }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className={className} {...base}>
