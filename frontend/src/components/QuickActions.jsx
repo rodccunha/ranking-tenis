@@ -7,6 +7,7 @@ export function QuickActions({
   jogador2, setJogador2,
   vencedor, setVencedor,
   resultado, setResultado,
+  dataPartida, setDataPartida,
   onSalvarPartida,
   salvando,
   novoJogador, setNovoJogador,
@@ -80,6 +81,14 @@ export function QuickActions({
             onChange={(e) => setResultado(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSalvarPartida()}
             aria-label="Resultado"
+          />
+
+          <input
+            className="input"
+            type="date"
+            value={dataPartida}
+            onChange={(e) => setDataPartida(e.target.value)}
+            aria-label="Data da partida"
           />
 
           <button className="btn-primary" onClick={onSalvarPartida} disabled={salvando}>

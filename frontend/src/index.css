@@ -83,6 +83,23 @@ select.input option {
   background: #1e293b;
 }
 
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-field svg {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.search-field .input {
+  padding-left: 40px;
+}
+
 /* ── Buttons ── */
 
 .btn-primary {

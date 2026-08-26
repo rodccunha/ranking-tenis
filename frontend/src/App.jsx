@@ -19,6 +19,7 @@ function App() {
   const [jogador2, setJogador2] = useState('')
   const [vencedor, setVencedor] = useState('')
   const [resultado, setResultado] = useState('')
+  const [dataPartida, setDataPartida] = useState(() => new Date().toISOString().slice(0, 10))
   const [novoJogador, setNovoJogador] = useState('')
   const [confirmacao, setConfirmacao] = useState(null) // { tipo: 'partida' | 'jogador', id, nome }
 
@@ -40,7 +41,7 @@ function App() {
   }
 
   async function carregarPartidas() {
-    const { data, error } = await supabase.from('partidas').select('*').order('id', { ascending: false })
+    const { data, error } = await supabase.from('partidas').select('*').order('data', { ascending: false }).order('id', { ascending: false })
     if (error) { mostrarToast('Erro ao carregar partidas', 'erro'); return }
     if (data) setPartidas(data)
   }
@@ -64,14 +65,19 @@ function App() {
       mostrarToast('Resultado inválido. Use o formato 6/4 6/3', 'erro')
       return
     }
+    if (!dataPartida) {
+      mostrarToast('Informe a data da partida', 'erro')
+      return
+    }
 
     setSalvando(true)
-    const { error } = await supabase.from('partidas').insert([{ jogador1, jogador2, vencedor, resultado }])
+    const { error } = await supabase.from('partidas').insert([{ jogador1, jogador2, vencedor, resultado, data: dataPartida }])
     if (error) {
       mostrarToast('Erro ao salvar partida', 'erro')
     } else {
       mostrarToast('Partida salva com sucesso!')
       setJogador1(''); setJogador2(''); setVencedor(''); setResultado('')
+      setDataPartida(new Date().toISOString().slice(0, 10))
       await carregarPartidas()
     }
     setSalvando(false)
@@ -236,6 +242,7 @@ function App() {
               jogador2={jogador2} setJogador2={setJogador2}
               vencedor={vencedor} setVencedor={setVencedor}
               resultado={resultado} setResultado={setResultado}
+              dataPartida={dataPartida} setDataPartida={setDataPartida}
               onSalvarPartida={cadastrarPartida}
               salvando={salvando}
               novoJogador={novoJogador} setNovoJogador={setNovoJogador}
