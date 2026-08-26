@@ -96,6 +96,10 @@ select.input option {
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -106,25 +110,6 @@ select.input option {
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.btn-danger {
-  padding: 7px 13px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: #f87171;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1px solid #f8717155;
-  transition: background 0.15s, color 0.15s;
-  margin-top: 10px;
-}
-
-.btn-danger:hover {
-  background: #ef44441a;
-  color: #fca5a5;
 }
 
 .btn-ghost {
@@ -274,6 +259,14 @@ select.input option {
   border-radius: 12px;
   border-left: 3px solid #22c55e;
   transition: box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.match-vs-block {
+  flex: 1;
+  min-width: 0;
 }
 
 .match-card:hover {
@@ -305,6 +298,9 @@ select.input option {
 .match-winner {
   color: #4ade80;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ── Loading spinner ── */
@@ -353,3 +349,167 @@ select.input option {
 
 .toast-sucesso { background: #16a34a; border: 1px solid #22c55e44; }
 .toast-erro    { background: #b91c1c; border: 1px solid #ef444444; }
+
+/* ── Hero ── */
+
+.hero {
+  text-align: center;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #16341f, #0f172a);
+  border: 1px solid #22c55e55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4ade80;
+}
+
+.hero h1 {
+  font-size: clamp(24px, 4.6vw, 34px);
+  line-height: 1.2;
+  margin: 0;
+  color: white;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.hero .accent { color: #4ade80; }
+
+.hero p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ── Card headers ── */
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.card-head svg { color: #4ade80; flex-shrink: 0; }
+
+.card-head h2 { margin: 0; }
+
+.card-sub {
+  color: #64748b;
+  font-size: 12.5px;
+  margin: 4px 0 0 30px;
+}
+
+/* ── Avatars & rank badges ── */
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rank-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.rank-1 { background: #4a3a0f; color: #fbbf24; box-shadow: 0 0 0 1px #fbbf2455; }
+.rank-2 { background: #33384a; color: #cbd5e1; box-shadow: 0 0 0 1px #cbd5e155; }
+.rank-3 { background: #3a2414; color: #d99a5f; box-shadow: 0 0 0 1px #d99a5f55; }
+.rank-n { background: #263449; color: #7d92ab; }
+
+.ranking-table thead th { position: sticky; top: 0; }
+
+/* ── Player card header / crown ── */
+
+.player-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.player-card-head h3 { margin: 0; }
+
+.crown { color: #fbbf24; flex-shrink: 0; }
+
+/* ── Quick actions tabs ── */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 18px;
+  background: #16202f;
+  padding: 4px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.tab-btn {
+  border: none;
+  background: transparent;
+  color: #7d92ab;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tab-btn.active { background: #263449; color: white; }
+.tab-btn:hover:not(.active) { color: #cbd5e1; }
+
+/* ── Match history delete button ── */
+
+.btn-icon-danger {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-icon-danger:hover {
+  background: #ef44441a;
+  color: #fca5a5;
+}

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { Toast } from './components/Toast'
-import { NovaPartidaForm } from './components/NovaPartidaForm'
-import { AdicionarJogadorForm } from './components/AdicionarJogadorForm'
+import { QuickActions } from './components/QuickActions'
 import { RankingTable } from './components/RankingTable'
 import { PlayerGrid } from './components/PlayerGrid'
 import { HistoricoPartidas } from './components/HistoricoPartidas'
+import { TrophyIcon } from './components/Icons'
 
 function App() {
   const [jogadores, setJogadores] = useState([])
@@ -125,11 +125,12 @@ function App() {
       <Toast mensagem={toast.mensagem} tipo={toast.tipo} />
 
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <div className="fade-in" style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h1 style={{ fontSize: 'clamp(26px, 5vw, 40px)', lineHeight: 1.2, margin: '0 0 10px', color: 'white', fontWeight: 700 }}>
-            🏆 LIGA LUCAS GUIMARÃES<br />TENNIS ACADEMY
-          </h1>
-          <p style={{ color: '#475569', fontSize: 14, margin: 0 }}>Sistema de partidas e classificação</p>
+        <div className="fade-in hero">
+          <div className="hero-badge">
+            <TrophyIcon size={26} />
+          </div>
+          <h1>Liga <span className="accent">Lucas Guimarães</span><br />Tennis Academy</h1>
+          <p>Sistema de partidas e classificação</p>
         </div>
 
         {carregando ? (
@@ -139,23 +140,20 @@ function App() {
           </div>
         ) : (
           <>
-            <NovaPartidaForm
+            <RankingTable ranking={ranking} />
+            <PlayerGrid ranking={ranking} />
+            <QuickActions
               jogadores={jogadores}
               jogador1={jogador1} setJogador1={setJogador1}
               jogador2={jogador2} setJogador2={setJogador2}
               vencedor={vencedor} setVencedor={setVencedor}
               resultado={resultado} setResultado={setResultado}
-              onSalvar={cadastrarPartida}
+              onSalvarPartida={cadastrarPartida}
               salvando={salvando}
-            />
-            <AdicionarJogadorForm
-              novoJogador={novoJogador}
-              setNovoJogador={setNovoJogador}
-              onAdicionar={cadastrarJogador}
+              novoJogador={novoJogador} setNovoJogador={setNovoJogador}
+              onAdicionarJogador={cadastrarJogador}
               adicionando={adicionandoJogador}
             />
-            <RankingTable ranking={ranking} />
-            <PlayerGrid ranking={ranking} />
             <HistoricoPartidas partidas={partidas} onExcluir={excluirPartida} />
           </>
         )}

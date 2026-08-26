@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CalendarIcon, TrophyIcon, TrashIcon } from './Icons'
 
 const POR_PAGINA = 5
 
@@ -14,8 +15,11 @@ export function HistoricoPartidas({ partidas, onExcluir }) {
   }, [partidas.length])
 
   return (
-    <div className="card fade-in-5">
-      <h2>📅 Histórico de Partidas</h2>
+    <div className="card fade-in-4">
+      <div className="card-head">
+        <CalendarIcon />
+        <h2>Histórico de Partidas</h2>
+      </div>
 
       {partidas.length === 0 ? (
         <p style={{ color: '#475569', marginTop: 16, fontSize: 14 }}>
@@ -26,17 +30,22 @@ export function HistoricoPartidas({ partidas, onExcluir }) {
           <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {itens.map((partida) => (
               <div key={partida.id} className="match-card">
-                <div className="match-title">
-                  {partida.jogador1}
-                  <span className="match-vs">vs</span>
-                  {partida.jogador2}
+                <div className="match-vs-block">
+                  <div className="match-title">
+                    {partida.jogador1}
+                    <span className="match-vs">vs</span>
+                    {partida.jogador2}
+                  </div>
+                  <div className="match-meta">
+                    <span className="match-winner">
+                      <TrophyIcon size={13} />
+                      {partida.vencedor}
+                    </span>
+                    {partida.resultado && <span>{partida.resultado}</span>}
+                  </div>
                 </div>
-                <div className="match-meta">
-                  <span className="match-winner">🏆 {partida.vencedor}</span>
-                  {partida.resultado && <span>📊 {partida.resultado}</span>}
-                </div>
-                <button className="btn-danger" onClick={() => onExcluir(partida.id)}>
-                  Excluir
+                <button className="btn-icon-danger" onClick={() => onExcluir(partida.id)} title="Excluir">
+                  <TrashIcon />
                 </button>
               </div>
             ))}

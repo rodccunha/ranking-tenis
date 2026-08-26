@@ -1,19 +1,14 @@
 import { useState } from 'react'
+import { TrophyIcon } from './Icons'
+import { initials, avatarColor, rateClass, rankBadge } from '../lib/playerVisuals'
 
 const COLUNAS = [
-  { key: 'posicao',        label: 'Pos.',       sortable: false },
   { key: 'nome',           label: 'Jogador',    sortable: true  },
   { key: 'vitorias',       label: 'Vitórias',   sortable: true  },
   { key: 'derrotas',       label: 'Derrotas',   sortable: true  },
   { key: 'partidas',       label: 'Partidas',   sortable: true  },
   { key: 'aproveitamento', label: 'Aproveit.',  sortable: true  },
 ]
-
-function rateClass(pct) {
-  if (pct >= 60) return 'rate rate-high'
-  if (pct >= 40) return 'rate rate-mid'
-  return 'rate rate-low'
-}
 
 export function RankingTable({ ranking }) {
   const [sortKey, setSortKey] = useState('aproveitamento')
@@ -35,15 +30,15 @@ export function RankingTable({ ranking }) {
     return sortDir === 'desc' ? -cmp : cmp
   })
 
-  const medalFor = (nome) => {
-    const i = ranking.findIndex((r) => r.nome === nome)
-    return i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1
-  }
+  const posicaoDe = (nome) => ranking.findIndex((r) => r.nome === nome) + 1
 
   return (
-    <div className="card fade-in-3">
-      <h2>🏆 Ranking</h2>
-      <p style={{ color: '#475569', fontSize: 12, margin: '4px 0 0' }}>
+    <div className="card fade-in-1">
+      <div className="card-head">
+        <TrophyIcon />
+        <h2>Ranking</h2>
+      </div>
+      <p className="card-sub">
         Ordenado por aproveitamento — em caso de empate, quem jogou mais partidas fica à frente
       </p>
       <div className="table-wrapper">
@@ -55,7 +50,7 @@ export function RankingTable({ ranking }) {
                   key={col.key}
                   className={sortKey === col.key ? 'sorted' : ''}
                   onClick={() => col.sortable && handleSort(col.key)}
-                  style={{ cursor: col.sortable ? 'pointer' : 'default' }}
+                  style={{ cursor: col.sortable ? 'pointer' : 'default', textAlign: col.key === 'nome' ? 'left' : 'center' }}
                   title={col.sortable ? 'Clique para ordenar' : ''}
                 >
                   {col.label}
@@ -69,20 +64,26 @@ export function RankingTable({ ranking }) {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((item) => (
-              <tr key={item.nome}>
-                <td>{medalFor(item.nome)}</td>
-                <td style={{ fontWeight: 500, textAlign: 'left' }}>{item.nome}</td>
-                <td style={{ color: '#4ade80', fontWeight: 600 }}>{item.vitorias}</td>
-                <td style={{ color: '#f87171' }}>{item.derrotas}</td>
-                <td>{item.partidas}</td>
-                <td>
-                  <span className={rateClass(item.aproveitamento)}>
-                    {item.aproveitamento}%
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {sorted.map((item) => {
+              const badge = rankBadge(posicaoDe(item.nome))
+              return (
+                <tr key={item.nome}>
+                  <td className="player-cell">
+                    <span className={badge.className}>{badge.label}</span>
+                    <span className="avatar" style={{ background: avatarColor(item.nome) }}>{initials(item.nome)}</span>
+                    {item.nome}
+                  </td>
+                  <td style={{ color: '#4ade80', fontWeight: 600 }}>{item.vitorias}</td>
+                  <td style={{ color: '#f87171' }}>{item.derrotas}</td>
+                  <td>{item.partidas}</td>
+                  <td>
+                    <span className={rateClass(item.aproveitamento)}>
+                      {item.aproveitamento}%
+                    </span>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
