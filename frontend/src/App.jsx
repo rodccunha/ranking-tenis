@@ -85,10 +85,20 @@ function App() {
     }
   }
 
+  function gamesDaPartida(resultado) {
+    let g1 = 0, g2 = 0, valido = false
+    for (const set of (resultado || '').trim().split(/\s+/)) {
+      const m = set.match(/^(\d+)\/(\d+)$/)
+      if (!m) continue
+      g1 += Number(m[1]); g2 += Number(m[2]); valido = true
+    }
+    return valido ? { g1, g2 } : null
+  }
+
   function calcularRanking() {
     const stats = {}
     jogadores.forEach((j) => {
-      stats[j.nome] = { nome: j.nome, vitorias: 0, derrotas: 0, partidas: 0, aproveitamento: 0 }
+      stats[j.nome] = { nome: j.nome, vitorias: 0, derrotas: 0, partidas: 0, aproveitamento: 0, saldoVitorias: 0, saldoGames: 0 }
     })
     partidas.forEach((p) => {
       const v = p.vencedor
@@ -96,12 +106,21 @@ function App() {
       if (!stats[v] || !stats[d]) return
       stats[v].vitorias++; stats[v].partidas++
       stats[d].derrotas++; stats[d].partidas++
+
+      const games = gamesDaPartida(p.resultado)
+      if (games) {
+        const gv = p.jogador1 === v ? games.g1 : games.g2
+        const gd = p.jogador1 === v ? games.g2 : games.g1
+        stats[v].saldoGames += gv - gd
+        stats[d].saldoGames += gd - gv
+      }
     })
     Object.values(stats).forEach((j) => {
       if (j.partidas > 0) j.aproveitamento = Math.round((j.vitorias / j.partidas) * 100)
+      j.saldoVitorias = j.vitorias - j.derrotas
     })
     return Object.values(stats).sort((a, b) =>
-      b.aproveitamento - a.aproveitamento || b.partidas - a.partidas
+      b.saldoVitorias - a.saldoVitorias || b.saldoGames - a.saldoGames
     )
   }
 

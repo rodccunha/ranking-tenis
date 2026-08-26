@@ -3,15 +3,17 @@ import { TrophyIcon } from './Icons'
 import { initials, avatarColor, rateClass, rankBadge } from '../lib/playerVisuals'
 
 const COLUNAS = [
-  { key: 'nome',           label: 'Jogador',    sortable: true  },
-  { key: 'vitorias',       label: 'Vitórias',   sortable: true  },
-  { key: 'derrotas',       label: 'Derrotas',   sortable: true  },
-  { key: 'partidas',       label: 'Partidas',   sortable: true  },
-  { key: 'aproveitamento', label: 'Aproveit.',  sortable: true  },
+  { key: 'nome',           label: 'Jogador',       sortable: true  },
+  { key: 'vitorias',       label: 'Vitórias',      sortable: true  },
+  { key: 'derrotas',       label: 'Derrotas',      sortable: true  },
+  { key: 'partidas',       label: 'Partidas',      sortable: true  },
+  { key: 'saldoVitorias',  label: 'Saldo V.',      sortable: true  },
+  { key: 'saldoGames',     label: 'Saldo Games',   sortable: true  },
+  { key: 'aproveitamento', label: 'Aproveit.',     sortable: true  },
 ]
 
 export function RankingTable({ ranking }) {
-  const [sortKey, setSortKey] = useState('aproveitamento')
+  const [sortKey, setSortKey] = useState('saldoVitorias')
   const [sortDir, setSortDir] = useState('desc')
 
   function handleSort(key) {
@@ -26,7 +28,8 @@ export function RankingTable({ ranking }) {
   const sorted = [...ranking].sort((a, b) => {
     const va = a[sortKey] ?? ''
     const vb = b[sortKey] ?? ''
-    const cmp = typeof va === 'string' ? va.localeCompare(vb) : va - vb
+    let cmp = typeof va === 'string' ? va.localeCompare(vb) : va - vb
+    if (cmp === 0 && sortKey === 'saldoVitorias') cmp = a.saldoGames - b.saldoGames
     return sortDir === 'desc' ? -cmp : cmp
   })
 
@@ -39,7 +42,7 @@ export function RankingTable({ ranking }) {
         <h2>Ranking</h2>
       </div>
       <p className="card-sub">
-        Ordenado por aproveitamento — em caso de empate, quem jogou mais partidas fica à frente
+        Ordenado por saldo de vitórias — em caso de empate, o saldo de games desempata
       </p>
       <div className="table-wrapper">
         <table className="ranking-table">
@@ -76,6 +79,8 @@ export function RankingTable({ ranking }) {
                   <td style={{ color: '#4ade80', fontWeight: 600 }}>{item.vitorias}</td>
                   <td style={{ color: '#f87171' }}>{item.derrotas}</td>
                   <td>{item.partidas}</td>
+                  <td style={{ fontWeight: 700 }}>{item.saldoVitorias > 0 ? `+${item.saldoVitorias}` : item.saldoVitorias}</td>
+                  <td>{item.saldoGames > 0 ? `+${item.saldoGames}` : item.saldoGames}</td>
                   <td>
                     <span className={rateClass(item.aproveitamento)}>
                       {item.aproveitamento}%
